@@ -7,32 +7,35 @@ from kmk.modules.encoder import EncoderHandler
 from kmk.extensions.media_keys import MediaKeys
 from kmk.modules.layers import Layers as _Layers
 from kmk.modules.macros import Macros
+from kmk.modules.macros import Press, Release, Tap
+
+
 import board
 
 keyboard = KMKKeyboard()
 
 # Define the row and column pins based on your setup
-keyboard.row_pins = (board.GP0, board.GP1, board.GP2)  # Rows are on GP0, GP1, GP2
-keyboard.col_pins = (board.GP3, board.GP4, board.GP5)  # Columns are on GP3, GP4, GP5
+keyboard.row_pins = (board.GP3, board.GP4, board.GP5)  # Rows are on GP0, GP1, GP2
+keyboard.col_pins = (board.GP0, board.GP1, board.GP2)  # Columns are on GP3, GP4, GP5
 
 # Set the diode orientation to ROWS
-keyboard.diode_orientation = DiodeOrientation.ROW2COL
+keyboard.diode_orientation = DiodeOrientation.COL2ROW
 
 # Define the custom coordinate mapping
 keyboard.coord_mapping = [
-    0, 3, 6,  # Mapping physical keys to logical positions 000, 003, 006
-    1, 4, 7,  # Mapping physical keys to logical positions 001, 004, 007
-    2, 5, 8,  # Mapping physical keys to logical positions 002, 005, 008
+    0, 1, 2,  # Mapping physical keys to logical positions 000, 003, 006
+    3, 4, 5,  # Mapping physical keys to logical positions 001, 004, 007
+    6, 7, 8,  # Mapping physical keys to logical positions 002, 005, 008
 ]
 
 keyboard.modules.append(MediaKeys())
 
 class RGB(_RGB):
-    def __init__(self, layer_indication: bool = False, pixels_order: list = None, swirl_order: list = None, **kwargs):
+    def __init__(self, layer_indication: bool = False, pixels_order: list = None, breathe_order: list = None, **kwargs):
         super().__init__(**kwargs)
         self.layer_indication = layer_indication
         self.pixels_order = pixels_order if pixels_order is not None else range(self.num_pixels)
-        self.swirl_order = swirl_order if swirl_order is not None else self.pixels_order
+        self.breathe_order = breathe_order if breathe_order is not None else self.pixels_order
 
     def indicate_layer(self):
         actual_layer = keyboard.active_layers[0]
@@ -77,19 +80,20 @@ class RGB(_RGB):
     def effect_static(self):
         super().effect_static()
         if self.layer_indication:
-            self.animation_mode = AnimationModes.SWIRL
+            self.animation_mode = AnimationModes.BREATHING
 
-    def effect_swirl(self):
+    def effect_breathe(self):
         self.increase_hue(self._step)
-        for n, i in enumerate(self.swirl_order):
+        for n, i in enumerate(self.breathe_order):
             self.set_hsv(0, 0, 0, i)
 
 rgb = RGB(
     pixel_pin=board.GP28,
     num_pixels= 12,
     layer_indication=True,
-    pixels_order=[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1],
-    val_default=128,
+    pixels_order=[1, 2, 3, 9, 10, 11, 7, 8, 9, 4, 5, 6],
+    val_default=255,
+    val_limit=255,
 )
 keyboard.extensions.append(rgb)
 
@@ -120,7 +124,7 @@ keyboard.modules.append(macros)
 rgb_keys = RGB(
     pixel_pin=board.GP29,  # Pin where the NeoPixel strip is connected
     num_pixels=9,          # Number of LEDs in the strip
-    val_limit=128,         # Brightness limit (255 is full brightness)
+    val_limit=255,         # Brightness limit (255 is full brightness)
     hue_default=0,         # Default hue (can be changed later)
     sat_default=255,       # Default saturation (can be changed later)
     val_default=128,       # Default brightness (can be changed later)
@@ -154,6 +158,31 @@ def next_layer(*_args):
 
 NEXT = KC.MACRO(next_layer)
 
+SAVE = KC.MACRO(
+    Press(KC.LCTL),
+    Tap(KC.S),
+    Release(KC.LCTL)
+)
+
+COPY = KC.MACRO(
+    Press(KC.LCTL),
+    Tap(KC.C),
+    Release(KC.LCTL)
+)
+
+CUT = KC.MACRO(
+    Press(KC.LCTL),
+    Tap(KC.X),
+    Release(KC.LCTL)
+)
+
+PASTE = KC.MACRO(
+    Press(KC.LCTL),
+    Tap(KC.V),
+    Release(KC.LCTL)
+)
+
+
 # Define the keymap with layers
 keyboard.keymap = [
     # Layer 0
@@ -165,8 +194,8 @@ keyboard.keymap = [
     # Layer 1
     [
         KC.TRNS, KC.TRNS, KC.F14,  # Transparent (no action), Transparent (no action), Function Key F14
-        KC.F15, KC.F16, KC.F17,    # Function Key F15, Function Key F16, Function Key F17
-        KC.F18, KC.F19, KC.F20,    # Function Key F18, Function Key F19, Function Key F20
+        SAVE, COPY, CUT,    # Function Key F15, Function Key F16, Function Key F17
+        PASTE, KC.F19, KC.F20,    # Function Key F18, Function Key F19, Function Key F20
     ],
     # Layer 2
     [
