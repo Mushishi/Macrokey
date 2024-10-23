@@ -1,3 +1,35 @@
+Update 23.10.2024
+
+I have reworked the base, the top, the and the knob. I have also created a solder helper for the neokey breakouts, so they will fit the key distance.
+
+In the base i have removed all the standoff's as they did not work proberly for me and with the new top you just add the keys in it, and then snap the 3x3 grid of the neokey breakouts after you have soldered them together. 
+
+It did also make more room for the wires. 
+
+I am also thinking about making 1 pcb that will handle the keys and the encoder but at that point it will be a new version all together. This new top will have the base of the encoder be flush with the buttom of the top. This is because i have created a disc for the encoder and 12 of the SK6812 mini-e leds so you do not need to solder wires onto the encoder.
+
+I did also make 12 holes in the top that will be above where the led's are so they will light up the knob.
+
+I have added the gerber and the bom to my github so you can use a service as jlcpcb to make that with the led's so you just need to solder wires to the pcb and the encoder. 
+
+I have also added a picture of how i have wired up the breakout's and the encoder breakout. It will be added to both the pictures here and to the readme on the github where i will also have the latest version of my code.py for kmk, where the led's under the knob will light up to show the active layer. 
+
+When i did print the latest version i had run out of black pla so i have used a natural one so the LED's really shine trough and i have used a simple script to have all the LED's run a rainbow script, just to show them off.
+
+I have also changed the encoder to this model: PEC11R-4215F-S0024 https://www.lcsc.com/product-detail/Rotary-Encoders_BOURNS-PEC11R-4215F-S0024_C143790.html
+
+Also there is no need for the screws to hold the Adafruit Neokey pcb's down since they are beeing hold by the switches now. 
+
+Video of all the LED's in action: https://www.youtube.com/watch?v=ITVVqdGO8GI
+
+-----------------------------------------------------
+
+Edit 23.09.2024
+
+Have redone the knob as it was not the correct hight and it was really tight on the shaft. It is still tight on the shaft but i will rather have it be tight then so loose that it falls off if you turn the macropad on it's top.
+
+-----------------------------------------------------
+
 I have been printing some diffrent macropads and wanted to design my own that have the things i would like to use.
 
 I wanted to use hotswap keys and i found the Adafruit neokey breakout boards so i have designed it to fit them so it is easy to sway the keys and only soldering will be wires from the controller to the breakout boards and between the boards.
@@ -6,13 +38,13 @@ I am still waiting on the boards but i have tested it using a 3d model of the bo
 
 I am also using a 12 LED Ring to show the layer that is active under the encoder button.
 
-I use KMK for the firmware.
-
-Printables files are here: https://www.printables.com/model/1013606-3x3-macropad
+I use KMK for the firmware and i have uploaded my config to my github here: https://github.com/Mushishi/Macrokey
 
 I have uploaded the fusion 360 files here if anyone want to edit it, and i have uploaded a base with the holder for the waveshare rp2040-zero and a version that do not have a holder for a rp2040 if you want to edit it for your own controller.
 
 Photos so far is the rendered photos from Fusion 360 i will add real photos when i get the breakout boards so i can show it together and working. 
+
+The RGB Ringholder is ment to be used as a defuser and will sit on top of the rgb ring.
 
 What you will need is:
 
@@ -36,9 +68,11 @@ Cable of your picking.
 
 I use the following keys on my waveshare rp2040-zero
 
-keyboard.row_pins = (board.GP0, board.GP1, board.GP2)  # Rows are on GP0, GP1, GP2
-keyboard.col_pins = (board.GP3, board.GP4, board.GP5)  # Columns are on GP3, GP4, GP5
+Rows are on GP0, GP1, GP2
+Columns are on GP3, GP4, GP5
 
-The LEDs under the keys are on GP28
+Encoder is connected on: GP7 (A), GP8 (B), GP6 (SW)
 
-The LED ring is on GP29
+The LEDs under the keys are on GP29
+
+The LED ring is on GP28
